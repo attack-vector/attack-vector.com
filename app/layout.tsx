@@ -4,9 +4,6 @@ import "./globals.css"
 import ClientLayout from "./ClientLayout"
 
 const siteUrl = "https://attack-vector.com"
-const rawBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
-const normalizedBasePath = rawBasePath ? `/${rawBasePath.replace(/^\/|\/$/g, "")}` : ""
-const withBasePath = (path: string) => `${normalizedBasePath}${path}`.replace(/\/{2,}/g, "/")
 const title = "Attack-Vector – AI-Powered Cyber Threat Intelligence"
 const description =
   "Attack-Vector turns cyber feeds into MITRE-mapped vectors — actionable intelligence ready for detection, response, and automation."
@@ -77,9 +74,9 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: withBasePath("/placeholder-logo.svg"),
-    shortcut: withBasePath("/placeholder-logo.svg"),
-    apple: withBasePath("/placeholder-logo.svg"),
+    icon: "/placeholder-logo.svg",
+    shortcut: "/placeholder-logo.svg",
+    apple: "/placeholder-logo.svg",
   },
   other: {
     "theme-color": "#0F172A",

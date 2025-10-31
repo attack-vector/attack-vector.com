@@ -19,6 +19,8 @@ jobs:
   build:
     name: Build static site
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_BASE_PATH: attack-vector
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -42,6 +44,27 @@ jobs:
 
       - name: Disable Jekyll on GitHub Pages
         run: touch out/.nojekyll
+
+      - name: Organize output for GitHub Pages
+        if: env.NEXT_PUBLIC_BASE_PATH != ''
+        run: |
+          BASE_PATH="${NEXT_PUBLIC_BASE_PATH}"
+          TARGET="out/${BASE_PATH}"
+          mkdir -p "${TARGET}"
+          shopt -s dotglob
+          for entry in out/*; do
+            name="$(basename "$entry")"
+            if [ "$name" = "$BASE_PATH" ] || [ "$name" = "CNAME" ] || [ "$name" = ".nojekyll" ]; then
+              continue
+            fi
+            mv "$entry" "$TARGET/"
+          done
+          cp "$TARGET/index.html" out/index.html
+          if [ -f "$TARGET/404.html" ]; then
+            cp "$TARGET/404.html" out/404.html
+          fi
+          cp out/.nojekyll "$TARGET/.nojekyll"
+          shopt -u dotglob
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

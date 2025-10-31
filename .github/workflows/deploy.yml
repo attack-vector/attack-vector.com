@@ -50,7 +50,7 @@ jobs:
           BASE_PATH: ${{ env.NEXT_PUBLIC_BASE_PATH }}
         run: |
           if [ -n "$BASE_PATH" ]; then
-            python3 - <<'PY'
+python3 - <<'PY'
 import os
 import re
 

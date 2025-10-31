@@ -50,8 +50,29 @@ jobs:
           BASE_PATH: ${{ env.NEXT_PUBLIC_BASE_PATH }}
         run: |
           if [ -n "$BASE_PATH" ]; then
-            find out \( -name '*.html' -o -name '*.txt' -o -name '*.json' \) -type f -print0 |
-              xargs -0 perl -pi -e 's|(href|src)="\/(?!\/)|$1="/'"$BASE_PATH"'\/|g'
+            python3 - <<'PY'
+import os
+import re
+
+base_path = os.environ.get("BASE_PATH", "").strip("/")
+if not base_path:
+    raise SystemExit(0)
+
+prefix = f"/{base_path}/"
+pattern = re.compile(r'(href|src)="\/(?!\/)')
+
+for root, _, files in os.walk("out"):
+    for filename in files:
+        if not filename.endswith((".html", ".txt", ".json")):
+            continue
+        path = os.path.join(root, filename)
+        with open(path, "r", encoding="utf-8") as handle:
+            content = handle.read()
+        updated = pattern.sub(lambda m: f'{m.group(1)}="{prefix}', content)
+        if updated != content:
+            with open(path, "w", encoding="utf-8") as handle:
+                handle.write(updated)
+PY
           fi
 
       - name: Add redirect for repository URL
